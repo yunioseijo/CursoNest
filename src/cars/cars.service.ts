@@ -54,7 +54,7 @@ export class CarsService {
   //   this.cars.splice(carIndex, 1);
   // }
   delete(id: string) {
-    const car = this.findOneById(id);
+    this.findOneById(id);
     this.cars = this.cars.filter((car) => car.id !== id);
   }
 }
