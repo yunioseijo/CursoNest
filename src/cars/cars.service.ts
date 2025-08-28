@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 
-import { CreateCarDto } from './dto/create-car.dto';
 import { Car } from './interfaces/car.interface';
+import { CreateCarDto, UpdateCarDto } from './dto';
 
 @Injectable()
 export class CarsService {
@@ -23,13 +23,6 @@ export class CarsService {
       model: 'Mustang',
     },
   ];
-  // createCar(createCarDto: CreateCarDto) {
-  //   const dto = CreateCarDto.create(createCarDto);
-  //   const newId = this.cars.length > 0 ? Math.max(...this.cars.map((car) => car.id)) + 1 : 1;
-  //   const newCar = { id: newId, ...dto };
-  //   this.cars.push(newCar);
-  //   return newCar;
-  // }
   findOneById(id: string) {
     const car = this.cars.find((car) => car.id === id);
     if (!car) {
@@ -39,5 +32,29 @@ export class CarsService {
   }
   findAll() {
     return this.cars;
+  }
+  create(createCarDto: CreateCarDto) {
+    const newCar: Car = { id: uuid(), ...createCarDto };
+    this.cars.push(newCar);
+    return newCar;
+  }
+  update(id: string, updateCarDto: UpdateCarDto) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) {
+      throw new NotFoundException(`Car with ID ${id} not found`);
+    }
+    Object.assign(car, updateCarDto);
+    return car;
+  }
+  // delete(id: string) {
+  //   const carIndex = this.cars.findIndex((car) => car.id === id);
+  //   if (carIndex === -1) {
+  //     throw new NotFoundException(`Car with ID ${id} not found`);
+  //   }
+  //   this.cars.splice(carIndex, 1);
+  // }
+  delete(id: string) {
+    const car = this.findOneById(id);
+    this.cars = this.cars.filter((car) => car.id !== id);
   }
 }
